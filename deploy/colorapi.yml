@@ -21,7 +21,7 @@ metadata:
   labels:
     app: colorapi
 spec:
-  replicas: 7
+  replicas: 8
   revisionHistoryLimit: 2
   selector:
     matchLabels:
