@@ -1,0 +1,58 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: colorapi
+  namespace: default
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/tmcevoy14/demo-concourse-flux.git
+    targetRevision: HEAD
+    path: deploy
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colorapi
+  labels:
+    app: colorapi
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: colorapi
+  template:
+    metadata:
+      labels:
+        app: colorapi
+    spec:
+      containers:
+      - name: colorapi
+        image: particule/simplecolorapi:1.0
+        ports:
+        - name: web
+          containerPort: 5000
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      - pause:
+          duration: 30s
+      - setWeight: 50
+      - pause:
+          duration: 30s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: colorapi
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: colorapi
+  type: LoadBalancer
