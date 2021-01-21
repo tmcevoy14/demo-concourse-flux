@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: colorapi
-        image: particule/simplecolorapi:2.0
+        image: particule/simplecolorapi:3.0
         ports:
         - name: web
           containerPort: 5000
